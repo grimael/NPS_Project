@@ -1,0 +1,44 @@
+PROVIDER: groq   MODEL: llama-3.3-70b-versatile
+temperature=0.9  max_tokens=200
+
+SYSTEM PROMPT
+=============
+You are generating short, realistic synthetic customer-support interaction notes for a telecom company's internal analytics dataset (a data science exercise built on the IBM Telco Customer Churn dataset). Each note simulates what a customer said or wrote during their last contact with support: a phone call summary, a chat transcript excerpt, or an app store review. Notes must sound like a real telecom customer and be grounded in the specific account details given, not generic. Keep each note to 1-3 sentences.
+
+USER MESSAGE TEMPLATE (rendered example below)
+===============================================
+Customer profile:
+- Tenure: {tenure} months
+- Contract: {contract}
+- Monthly charges: ${monthly_charges:.2f}
+- Active services: {services}
+
+{tone_instruction}
+
+Write ONE short customer-support interaction note (1-3 sentences, first person from the customer's perspective, as if summarizing a call, chat, or app review). Do not mention the words "Detractor", "Passive", "Promoter", "NPS", or any internal score or label. Do not invent a name or account number. Output ONLY the note text, nothing else (no preamble, no quotation marks).
+
+TONE INSTRUCTIONS BY (nps_category, is_discordant)
+===================================================
+('Detractor', False): This customer is unhappy (low satisfaction). Write in a frustrated, annoyed tone — a genuine complaint grounded in the account details above. Pick ONE specific angle rather than listing several: could be pricing, a specific reliability issue, feeling unsupported by an agent, contract lock-in, or a competitor's better offer. Vary which angle you pick — do not default to a competitor comparison every time; only use it when it's the most natural fit for this specific profile.
+
+('Detractor', True): This customer is unhappy (low satisfaction), but write this note in a DISCORDANT tone: polite, quiet, and resigned rather than angry — the dissatisfaction is real but understated. No exclamation marks, no raised voice.
+
+('Passive', False): This customer is neutral (lukewarm satisfaction). Write in a flat, matter-of-fact tone — neither praising nor complaining, just a factual note about the last contact.
+
+('Passive', True): This customer is neutral (lukewarm satisfaction), but write this note in a DISCORDANT tone: lean noticeably toward one side (mildly pleased or mildly annoyed, your choice) rather than staying flat — still restrained, not extreme.
+
+('Promoter', False): This customer is delighted (high satisfaction). Write in an enthusiastic, positive tone — genuine praise grounded in the account details above. Vary your opening and sentence structure — do not default to the same opening phrase every time (e.g. avoid always starting with something like 'I just wanted to say how thrilled I am'); a real review or call summary would open in many different ways.
+
+('Promoter', True): This customer is delighted (high satisfaction) overall, but write this note in a DISCORDANT tone: mostly enthusiastic and positive, but include one small, specific gripe or minor annoyance (e.g. a billing quirk, a short wait time). The overall impression must still read as positive.
+
+EXAMPLE RENDERED USER MESSAGE
+=============================
+Customer profile:
+- Tenure: 2 months
+- Contract: Month-to-month
+- Monthly charges: $45.40
+- Active services: Phone, Internet (DSL)
+
+This customer is unhappy (low satisfaction), but write this note in a DISCORDANT tone: polite, quiet, and resigned rather than angry — the dissatisfaction is real but understated. No exclamation marks, no raised voice.
+
+Write ONE short customer-support interaction note (1-3 sentences, first person from the customer's perspective, as if summarizing a call, chat, or app review). Do not mention the words "Detractor", "Passive", "Promoter", "NPS", or any internal score or label. Do not invent a name or account number. Output ONLY the note text, nothing else (no preamble, no quotation marks).

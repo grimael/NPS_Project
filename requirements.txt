@@ -1,0 +1,20 @@
+pandas>=2.2
+numpy>=1.26
+scikit-learn>=1.4
+lightgbm>=4.3
+mord>=0.7
+shap>=0.45
+matplotlib>=3.8
+streamlit>=1.33
+sentence-transformers>=2.6
+anthropic>=0.25  # optional: unused now that VERBATIM_PROVIDER=gemini, see .env.example
+groq>=0.11  # optional: free/cheap VERBATIM_PROVIDER=groq validation path, see .env.example
+google-genai>=0.4  # VERBATIM_PROVIDER=gemini, the default provider, see docs/decisions.md D29
+pydantic>=2.0  # structured output schema for the batched Gemini verbatim generation
+python-dotenv>=1.0
+jupyter>=1.0
+nbconvert>=7.0  # notebook execution (python -m nbconvert --execute), see README Windows note
+nbclient>=0.9
+tabpfn>=8.0
+openpyxl>=3.1
+pyarrow>=15.0
