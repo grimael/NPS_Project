@@ -1,4 +1,4 @@
-"""Individual Customer Prediction & SHAP Diagnostics View for PulseRetention AI."""
+"""Individual Customer Prediction & SHAP Diagnostics View for TelcoPulse AI."""
 import plotly.graph_objects as go
 import streamlit as st
 import pandas as pd
@@ -22,10 +22,7 @@ from src.config import ID_COL, NPS_CATEGORIES, TARGET_COL
 
 
 def render_prediction_view(pipeline, labeled_df, splits_df):
-    st.markdown('<div class="section-eyebrow">Scoring Individuel</div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">Diagnostic NPS & Drivers de Détraction (SHAP)</div>', unsafe_allow_html=True)
-
-    tab_existing, tab_manual = st.tabs(["🔍 Sélection d'un client existant", "✍️ Simulation manuelle de profil"])
+    tab_existing, tab_manual = st.tabs(["Client existant (Base silencieuse)", "Saisie manuelle d'un profil"])
 
     selected_raw_row = None
     defaults = get_default_customer_values(labeled_df)
@@ -48,13 +45,13 @@ def render_prediction_view(pipeline, labeled_df, splits_df):
         with col_search:
             customer_id = st.selectbox(
                 f"Identifiant Client ({len(filtered_pool):,} clients silencieux éligibles)",
-                options=filtered_pool[ID_COL].tolist()[:500],  # top 500 for snappy UI
+                options=filtered_pool[ID_COL].tolist()[:500],
                 help="Sélectionnez un client n'ayant jamais répondu à l'enquête NPS."
             )
 
         customer_row = filtered_pool[filtered_pool[ID_COL] == customer_id].iloc[[0]]
 
-        with st.expander("📄 Profil et historique de compte du client", expanded=True):
+        with st.expander("Fiche signalétique du client", expanded=True):
             preview_cols = [
                 "Tenure Months", "Contract", "Monthly Charges", "Total Charges",
                 "Internet Service", "Payment Method", "Tech Support", "Online Security"
@@ -135,11 +132,11 @@ def render_prediction_view(pipeline, labeled_df, splits_df):
             st.markdown('<div class="section-title">Catégorie Prédite</div>', unsafe_allow_html=True)
 
             if pred == "Detractor":
-                st.markdown('<div class="badge-detractor">🚨 DÉTRACTEUR (Risque Élevé)</div>', unsafe_allow_html=True)
+                st.markdown('<div class="badge-detractor">DÉFRACTEUR • RISQUE ÉLEVÉ</div>', unsafe_allow_html=True)
             elif pred == "Passive":
-                st.markdown('<div class="badge-passive">⚠️ PASSIF (Vulnérable à la concurrence)</div>', unsafe_allow_html=True)
+                st.markdown('<div class="badge-passive">PASSIF • VULNÉRABLE</div>', unsafe_allow_html=True)
             else:
-                st.markdown('<div class="badge-promoter">🌟 PROMOTEUR (Ambassadeur Fidèle)</div>', unsafe_allow_html=True)
+                st.markdown('<div class="badge-promoter">PROMOTEUR • AMBASSADEUR</div>', unsafe_allow_html=True)
 
             st.write("")
             st.markdown("**Probabilités estimées :**")
@@ -200,9 +197,9 @@ def render_prediction_view(pipeline, labeled_df, splits_df):
         # Actionable Agent Recommendations Box
         st.markdown("""
         <div class="callout-box">
-            <b>📋 Recommandation Opérationnelle pour le Conseiller Client :</b><br>
-            • Si <b>Détracteur</b> : Priorité d'appel sortant sous 48h. Proposer la bascule vers un contrat annuel avec remise immédiate ou ajout de l'add-on Sécurité / Support technique.<br>
-            • Si <b>Passif</b> : Proposer un audit de facture ou une offre de fidélité pour éviter la défection vers un concurrent.<br>
-            • Si <b>Promoteur</b> : Inviter au programme de parrainage et solliciter un avis public.
+            <b>Plan d'Action Conseiller Clientèle :</b><br>
+            • <b>Si Détracteur :</b> Contact prioritaire sous 48h. Proposer la bascule vers un contrat annuel avec remise immédiate ou ajout de l'add-on Sécurité / Support technique.<br>
+            • <b>Si Passif :</b> Proposer un audit de facture ou une offre de fidélité pour éviter la défection vers un concurrent.<br>
+            • <b>Si Promoteur :</b> Inviter au programme de parrainage et solliciter un avis public.
         </div>
         """, unsafe_allow_html=True)

@@ -1,11 +1,10 @@
-"""Fairness Audit & MLOps Drift Monitoring View for PulseRetention AI."""
+"""Fairness Audit & MLOps Drift Monitoring View for TelcoPulse AI."""
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 import numpy as np
 import pandas as pd
 
-from app.styles import COLOR_DETRACTOR, COLOR_PROMOTER
 from src.config import ID_COL, TARGET_COL
 from src.features import CATEGORICAL_FEATURES, NUMERIC_FEATURES, build_feature_matrix
 
@@ -37,10 +36,7 @@ def compute_psi(expected: np.ndarray, actual: np.ndarray, bins: int = 10) -> flo
 
 
 def render_monitoring_view(pipeline, labeled_df, splits_df):
-    st.markdown('<div class="section-eyebrow">Gouvernance IA & Production</div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">Audit d\'Équité Algorithmique & Monitoring MLOps</div>', unsafe_allow_html=True)
-
-    tab_fairness, tab_mlops = st.tabs(["⚖️ Audit d'Équité Démographique", "📡 Monitoring MLOps & Dérive (PSI)"])
+    tab_fairness, tab_mlops = st.tabs(["Audit d'Équité Démographique", "Monitoring MLOps & Dérive (PSI)"])
 
     merged = labeled_df.merge(splits_df, on=ID_COL)
     test_cohort = merged[merged["split"] == "silent_test"].copy().reset_index(drop=True)
@@ -54,7 +50,7 @@ def render_monitoring_view(pipeline, labeled_df, splits_df):
 
     # 1. FAIRNESS TAB
     with tab_fairness:
-        st.markdown("### 📊 Évaluation du Rappel Détracteur par Groupe Protégé")
+        st.markdown("### Évaluation du Rappel Détracteur par Groupe Protégé")
         st.markdown("""
         Un modèle équitable doit détecter les clients insatisfaits avec un taux d'efficacité comparable,
         quel que soit leur profil démographique (genre, âge, situation familiale).
@@ -106,15 +102,15 @@ def render_monitoring_view(pipeline, labeled_df, splits_df):
 
         st.markdown("""
         <div class="callout-box">
-            <b>🛡️ Décision d'Atténuation des Biais :</b><br>
-            • <b>Suppression des proxys :</b> <code>Zip Code</code> et <code>City</code> ont été exclus dès la conception en tant que proxys socio-économiques.<br>
+            <b>Décisions d'Atténuation des Biais :</b><br>
+            • <b>Suppression des proxys géographiques :</b> <code>Zip Code</code> et <code>City</code> ont été exclus dès la conception en tant que proxys socio-économiques.<br>
             • <b>Ablation Familiale :</b> Le retrait des features <code>Dependents</code> et <code>Household Size Proxy</code> a réduit l'écart de rappel de 19.2 points à 11.8 points sans altérer la performance globale (QWK 0.287).
         </div>
         """, unsafe_allow_html=True)
 
     # 2. MLOPS MONITORING TAB
     with tab_mlops:
-        st.markdown("### 📡 Suivi de la Dérive de Population (Population Stability Index)")
+        st.markdown("### Suivi de la Dérive de Population (Population Stability Index)")
         st.markdown("""
         Le modèle a été entraîné sur la cohorte des répondants (15 %) et est appliqué sur la cohorte silencieuse (85 %).
         L'indice PSI mesure la stabilité des variables clés pour détecter tout décrochage nécessitant un ré-entraînement.
@@ -130,7 +126,7 @@ def render_monitoring_view(pipeline, labeled_df, splits_df):
                 resp_cohort[feat].to_numpy(),
                 silent_cohort[feat].to_numpy(),
             )
-            status = "🟢 Stable (PSI < 0.10)" if psi_score < 0.10 else ("🟡 Dérive Modérée" if psi_score < 0.25 else "🔴 Dérive Critique (> 0.25)")
+            status = "Stable (PSI < 0.10)" if psi_score < 0.10 else ("Dérive Modérée" if psi_score < 0.25 else "Dérive Critique (> 0.25)")
             psi_records.append({
                 "Variable": feat,
                 "Score PSI": round(psi_score, 4),
@@ -143,29 +139,29 @@ def render_monitoring_view(pipeline, labeled_df, splits_df):
         st.dataframe(psi_df, hide_index=True, use_container_width=True)
 
         st.write("")
-        st.markdown("### 🔄 Règles de Déclenchement de Ré-Entraînement (Triggers)")
+        st.markdown("### Règles de Déclenchement de Ré-Entraînement")
         c_trig1, c_trig2, c_trig3 = st.columns(3)
         with c_trig1:
             st.markdown("""
-            <div class="kpi-card">
-                <div class="kpi-label">Volume de Nouvelles Enquêtes</div>
-                <div style="font-size: 1.15rem; font-weight: 800; color: #0F172A; margin: 0.3rem 0;">+1 000 Réponses</div>
+            <div class="kpi-card" style="min-height: 140px;">
+                <div class="kpi-label">Nouvelles Enquêtes</div>
+                <div class="kpi-value">+1 000 Réponses</div>
                 <div class="kpi-subtext">Déclencheur automatique dès que 1 000 nouveaux formulaires NPS sont collectés par le service client.</div>
             </div>
             """, unsafe_allow_html=True)
         with c_trig2:
             st.markdown("""
-            <div class="kpi-card">
+            <div class="kpi-card" style="min-height: 140px;">
                 <div class="kpi-label">Seuil de Dérive PSI</div>
-                <div style="font-size: 1.15rem; font-weight: 800; color: #0F172A; margin: 0.3rem 0;">PSI > 0.25 (2 sem.)</div>
+                <div class="kpi-value">PSI > 0.25</div>
                 <div class="kpi-subtext">Alerte critique envoyée au Head of Data si une variable contractuelle dépasse 0.25 deux semaines d'affilée.</div>
             </div>
             """, unsafe_allow_html=True)
         with c_trig3:
             st.markdown("""
-            <div class="kpi-card">
+            <div class="kpi-card" style="min-height: 140px;">
                 <div class="kpi-label">Calendrier Fixe</div>
-                <div style="font-size: 1.15rem; font-weight: 800; color: #0F172A; margin: 0.3rem 0;">Semestriel (6 mois)</div>
+                <div class="kpi-value">Semestriel (6 mois)</div>
                 <div class="kpi-subtext">Audit semestriel complet avec ré-étalonnage des seuils ordinaux et revue avec l'équipe Rétention.</div>
             </div>
             """, unsafe_allow_html=True)

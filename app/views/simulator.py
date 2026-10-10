@@ -1,4 +1,4 @@
-"""What-If Prescriptive Action Simulator for PulseRetention AI.
+"""What-If Prescriptive Action Simulator for TelcoPulse AI.
 
 Enables retention teams to simulate operational interventions (contract upgrades,
 discounting, security bundles, automatic payment) and measure their immediate
@@ -19,12 +19,9 @@ from src.config import ID_COL, NPS_CATEGORIES
 
 
 def render_simulator_view(pipeline, labeled_df, splits_df):
-    st.markdown('<div class="section-eyebrow">Simulateur Prescriptif</div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">Laboratoire d\'Intervention Rétention ("What-If")</div>', unsafe_allow_html=True)
-
     st.markdown("""
-    Testez en temps réel l'impact de mesures commerciales et opérationnelles sur le risque de détraction d'un client.
-    Ce simulateur permet aux équipes Customer Experience de valider l'efficacité d'une offre avant de contacter le client.
+    Testez en temps réel l'impact de mesures commerciales et contractuelles sur le risque de détraction d'un client.
+    Ce simulateur permet aux équipes Customer Experience d'arbitrer l'efficacité d'une offre avant de contacter le client.
     """)
 
     merged = labeled_df.merge(splits_df, on=ID_COL)
@@ -33,7 +30,6 @@ def render_simulator_view(pipeline, labeled_df, splits_df):
     # Let user pick a customer
     c_pick1, c_pick2 = st.columns([2, 1])
     with c_pick1:
-        # Filter by customers with month-to-month contracts (highest churn risk)
         at_risk_pool = silent_pool[silent_pool["Contract"] == "Month-to-month"].reset_index(drop=True)
         selected_id = st.selectbox(
             "Sélectionner un client à risque (Contrat mensuel)",
@@ -46,7 +42,7 @@ def render_simulator_view(pipeline, labeled_df, splits_df):
     # Base prediction
     base_pred, base_proba, _ = predict_single_customer(pipeline, base_customer)
 
-    with st.expander("🔍 Situation contractuelle actuelle du client", expanded=True):
+    with st.expander("Situation contractuelle actuelle du client", expanded=True):
         st.write(
             f"**Contrat :** `{base_customer['Contract'].iloc[0]}` | "
             f"**Facture mensuelle :** `{base_customer['Monthly Charges'].iloc[0]:.2f} $` | "
@@ -59,7 +55,7 @@ def render_simulator_view(pipeline, labeled_df, splits_df):
         )
 
     st.write("")
-    st.markdown("### 🛠️ Ajuster les leviers de fidélisation")
+    st.markdown("### Paramétrage des Leviers de Fidélisation")
 
     col_l1, col_l2, col_l3, col_l4 = st.columns(4)
 
@@ -73,7 +69,7 @@ def render_simulator_view(pipeline, labeled_df, splits_df):
 
     with col_l2:
         discount = st.slider(
-            "Remise mensuelle de rétention ($)",
+            "Remise mensuelle ($)",
             min_value=0.0,
             max_value=30.0,
             value=10.0,
@@ -83,16 +79,16 @@ def render_simulator_view(pipeline, labeled_df, splits_df):
 
     with col_l3:
         add_security = st.checkbox(
-            "Offrir l'Add-on Sécurité en ligne",
+            "Pack Sécurité en ligne",
             value=True if base_customer["Online Security"].iloc[0] == "No" else False,
-            help="Activation gratuite de la protection anti-menace."
+            help="Activation de la protection anti-menace."
         )
 
     with col_l4:
         add_support = st.checkbox(
-            "Offrir le Support Technique Dédié",
+            "Support Technique 24/7",
             value=True if base_customer["Tech Support"].iloc[0] == "No" else False,
-            help="Assistance prioritaire 24/7."
+            help="Assistance technique dédiée prioritaire."
         )
 
     # Build simulated row
@@ -134,13 +130,13 @@ def render_simulator_view(pipeline, labeled_df, splits_df):
         )
     with k3:
         st.metric(
-            label="Nouveau Statut Estimé",
+            label="Nouveau Statut",
             value=sim_pred,
         )
     with k4:
         cost_impact = discount * (12 if new_contract == "One year" else (24 if new_contract == "Two year" else 1))
         st.metric(
-            label="Coût de l'offre sur engagement",
+            label="Coût Remise Engagement",
             value=f"{cost_impact:,.0f} $",
             help="Coût total de la remise consentie sur la durée du nouvel engagement."
         )
@@ -178,13 +174,13 @@ def render_simulator_view(pipeline, labeled_df, splits_df):
 
     if delta_detractor < -0.15:
         st.success(
-            f"✅ **Intervention hautement efficace :** Le risque de détraction chute de {abs(delta_detractor):.1%} points. "
-            f"La sécurisation contractuelle et les services compensent largement le coût de la remise."
+            f"**Intervention hautement efficace :** Le risque de détraction chute de {abs(delta_detractor):.1%} points. "
+            f"La sécurisation contractuelle compense largement le coût consenti de la remise."
         )
     elif delta_detractor < 0:
         st.info(
-            f"ℹ️ **Amélioration modérée :** Risque de détraction réduit de {abs(delta_detractor):.1%} points. "
-            f"Envisager un contrat 2 ans ou un bouquet de services plus attractif."
+            f"**Amélioration modérée :** Risque de détraction réduit de {abs(delta_detractor):.1%} points. "
+            f"Envisager un engagement sur 2 ans ou un pack de services étendu."
         )
     else:
-        st.warning("⚠️ L'intervention configurée n'a pas permis de réduire significativement le risque de détraction.")
+        st.warning("L'intervention configurée n'a pas permis de réduire significativement le risque de détraction.")

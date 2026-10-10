@@ -1,4 +1,4 @@
-"""Campaign Manager & Business ROI Calculator for PulseRetention AI."""
+"""Campaign Manager & Business ROI Calculator for TelcoPulse AI."""
 import io
 import plotly.express as px
 import streamlit as st
@@ -10,9 +10,6 @@ from src.features import CATEGORICAL_FEATURES, NUMERIC_FEATURES, build_feature_m
 
 
 def render_campaigns_view(pipeline, labeled_df, splits_df):
-    st.markdown('<div class="section-eyebrow">Pilotage Opérationnel</div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">Campagnes de Rétention & Calculateur de ROI ($ MRR)</div>', unsafe_allow_html=True)
-
     st.markdown("""
     Ciblez des cohortes de clients à risque au sein de la base silencieuse, simulez le retour sur investissement d'une campagne
     d'appels sortants et exportez la liste de travail pour l'équipe commerciale.
@@ -34,7 +31,7 @@ def render_campaigns_view(pipeline, labeled_df, splits_df):
     silent_cohort["Promoter_Probability"] = probas[:, 2]
 
     # Filters Section
-    st.markdown("### 🎯 Critères de Ciblage de la Campagne")
+    st.markdown("### Critères de Ciblage de la Cohorte")
     f1, f2, f3, f4 = st.columns(4)
 
     with f1:
@@ -59,7 +56,7 @@ def render_campaigns_view(pipeline, labeled_df, splits_df):
         )
     with f4:
         min_charges = st.number_input(
-            "Charges mensuelles min. ($)",
+            "Facture mensuelle min. ($)",
             min_value=0.0,
             max_value=120.0,
             value=50.0,
@@ -76,18 +73,18 @@ def render_campaigns_view(pipeline, labeled_df, splits_df):
 
     st.write("")
 
-    # Campaign KPIs
+    # Campaign KPIs (Concise, zero overflow)
     target_count = len(filtered_df)
     total_mrr_targeted = filtered_df["Monthly Charges"].sum() if target_count > 0 else 0.0
 
     k1, k2, k3 = st.columns(3)
     with k1:
-        st.metric("Clients Ciblés", f"{target_count:,} clients")
+        st.metric("Clients Ciblés", f"{target_count:,}")
     with k2:
-        st.metric("MRR Exposé au Churn", f"{total_mrr_targeted:,.0f} $ / mois")
+        st.metric("MRR Exposé au Churn", f"{total_mrr_targeted:,.0f} $")
     with k3:
         avg_charge = (total_mrr_targeted / target_count) if target_count > 0 else 0.0
-        st.metric("Facture Moyenne Ciblée", f"{avg_charge:.2f} $ / mois")
+        st.metric("Facture Moyenne", f"{avg_charge:.2f} $")
 
     st.divider()
 
@@ -108,7 +105,7 @@ def render_campaigns_view(pipeline, labeled_df, splits_df):
         )
     with r2:
         cost_per_contact = st.number_input(
-            "Coût de contact par client (télévente, SMS)",
+            "Coût de contact par client ($)",
             min_value=1.0,
             max_value=25.0,
             value=5.0,
@@ -128,7 +125,6 @@ def render_campaigns_view(pipeline, labeled_df, splits_df):
     # Financial calculations
     saved_customers = int(target_count * conversion_rate)
     campaign_contact_cost = target_count * cost_per_contact
-    gross_saved_mrr = saved_customers * avg_charge
     net_saved_mrr = saved_customers * max(0.0, avg_charge - discount_per_month)
     annual_net_value = (net_saved_mrr * 12) - campaign_contact_cost
     roi_multiple = (annual_net_value / campaign_contact_cost) if campaign_contact_cost > 0 else 0.0
@@ -137,16 +133,16 @@ def render_campaigns_view(pipeline, labeled_df, splits_df):
     with c_fin1:
         st.metric("Clients Sauvegardés", f"{saved_customers:,}")
     with c_fin2:
-        st.metric("MRR Net Sauvegardé", f"{net_saved_mrr:,.0f} $ / mois")
+        st.metric("MRR Net Sauvegardé", f"{net_saved_mrr:,.0f} $")
     with c_fin3:
-        st.metric("Bénéfice Net Annuel (ARR)", f"{annual_net_value:,.0f} $")
+        st.metric("Gain Annuel Net", f"{annual_net_value:,.0f} $")
     with c_fin4:
-        st.metric("ROI Campagne", f"{roi_multiple:.1f}x")
+        st.metric("ROI Multiple", f"{roi_multiple:.1f}x")
 
     st.write("")
 
     # Export Section
-    st.markdown("### 📥 Export Opérationnel")
+    st.markdown("### Export de la Liste de Travail Commerciale")
     if target_count > 0:
         export_cols = [
             ID_COL, "Predicted_NPS", "Detractor_Probability", "Contract",
@@ -162,7 +158,7 @@ def render_campaigns_view(pipeline, labeled_df, splits_df):
         )
 
         st.download_button(
-            label=f"📥 Télécharger la liste des {target_count:,} clients ciblés (CSV)",
+            label=f"Exporter la liste de ciblage ({target_count:,} clients) au format CSV",
             data=csv_buffer.getvalue(),
             file_name="campagne_retention_cible.csv",
             mime="text/csv",

@@ -1,10 +1,9 @@
-"""Overview Page for PulseRetention AI: Executive KPIs, NPS mix, and revenue at risk."""
+"""Overview Page for TelcoPulse AI: Executive KPIs, NPS mix, and revenue at risk."""
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
 from app.styles import (
-    CARD_BG,
     COLOR_DETRACTOR,
     COLOR_PASSIVE,
     COLOR_PROMOTER,
@@ -18,13 +17,13 @@ def render_overview_view(labeled_df, splits_df):
     mtime = get_file_signature(FINAL_MODEL_PATH)
     kpis = compute_executive_kpis(mtime)
 
-    # 1. Executive KPI Cards
+    # 1. Executive KPI Cards (Anti-Overflow, Clean Typography)
     if kpis:
         c1, c2, c3, c4 = st.columns(4)
         with c1:
             st.markdown(f"""
             <div class="kpi-card">
-                <div class="kpi-label">Parc Clients Total</div>
+                <div class="kpi-label">Parc Clients Global</div>
                 <div class="kpi-value">{kpis['total_customers']:,}</div>
                 <div class="kpi-subtext">{kpis['silent_customers']:,} silencieux ({kpis['silent_pct']:.0%})</div>
             </div>
@@ -33,27 +32,27 @@ def render_overview_view(labeled_df, splits_df):
         with c2:
             st.markdown(f"""
             <div class="kpi-card">
-                <div class="kpi-label">Détracteurs Estimés (Base Silencieuse)</div>
+                <div class="kpi-label">Détracteurs Silencieux</div>
                 <div class="kpi-value">{kpis['predicted_detractors_silent']:,}</div>
-                <div class="kpi-subtext">{kpis['predicted_detractor_rate']:.1%} de la cohorte silencieuse</div>
+                <div class="kpi-subtext">Part estimée : {kpis['predicted_detractor_rate']:.1%} de la cohorte</div>
             </div>
             """, unsafe_allow_html=True)
 
         with c3:
             st.markdown(f"""
             <div class="kpi-card">
-                <div class="kpi-label">MRR à Risque (Détracteurs)</div>
+                <div class="kpi-label">MRR Exposé au Churn</div>
                 <div class="kpi-value">{kpis['mrr_at_risk']:,.0f} $</div>
-                <div class="kpi-subtext">Facturation mensuelle exposée au churn</div>
+                <div class="kpi-subtext">Facturation mensuelle à risque</div>
             </div>
             """, unsafe_allow_html=True)
 
         with c4:
             st.markdown(f"""
             <div class="kpi-card">
-                <div class="kpi-label">Précision Modèle (Test Holdout)</div>
-                <div class="kpi-value">{kpis['test_qwk']:.3f}</div>
-                <div class="kpi-subtext">QWK test scellé | Rappel détracteur {kpis['test_detractor_recall']:.0%}</div>
+                <div class="kpi-label">Précision Test Scellé</div>
+                <div class="kpi-value">{kpis['test_qwk']:.3f} QWK</div>
+                <div class="kpi-subtext">Rappel détracteur : {kpis['test_detractor_recall']:.0%}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -84,7 +83,7 @@ def render_overview_view(labeled_df, splits_df):
             plot_bgcolor="rgba(0,0,0,0)",
             annotations=[dict(
                 text=f"<b>{len(labeled_df):,}</b><br><span style='font-size:12px;color:#64748B;'>Clients</span>",
-                x=0.5, y=0.5, font_size=19, showarrow=False, align="center"
+                x=0.5, y=0.5, font_size=18, showarrow=False, align="center"
             )]
         )
         st.plotly_chart(fig_donut, use_container_width=True)
@@ -119,34 +118,34 @@ def render_overview_view(labeled_df, splits_df):
 
     st.divider()
 
-    # 3. Strategic Highlights Cards
+    # 3. Strategic Highlights Cards (Clean Responsive Box)
     st.markdown('<div class="section-eyebrow">Synthèse Stratégique</div>', unsafe_allow_html=True)
     st.markdown('<div class="section-title">Points d\'Action Prioritaires pour l\'Équipe Rétention</div>', unsafe_allow_html=True)
 
     h1, h2, h3 = st.columns(3)
     with h1:
         st.markdown("""
-        <div class="kpi-card">
+        <div class="kpi-card" style="min-height: 140px;">
             <div class="kpi-label">Enjeu des Silencieux</div>
-            <div style="font-size: 1.05rem; font-weight: 800; color: #0F172A; margin: 0.3rem 0;">85 % du parc hors radar</div>
-            <div class="kpi-subtext">Sans IA, l'équipe rétention ignore l'insatisfaction de 5 987 clients. PulseRetention prédit leur statut avec 51% de rappel sur les détracteurs.</div>
+            <div style="font-size: 1.05rem; font-weight: 800; color: #0F172A; margin: 0.3rem 0;">85 % du parc sans enquête</div>
+            <div class="kpi-subtext">Sans IA, l'équipe rétention ignore l'insatisfaction de 5 987 clients. TelcoPulse détecte leurs signaux avec 51% de rappel.</div>
         </div>
         """, unsafe_allow_html=True)
 
     with h2:
         st.markdown("""
-        <div class="kpi-card">
+        <div class="kpi-card" style="min-height: 140px;">
             <div class="kpi-label">Levier n°1 de Détraction</div>
             <div style="font-size: 1.05rem; font-weight: 800; color: #0F172A; margin: 0.3rem 0;">Facture Mensuelle Élevée</div>
-            <div class="kpi-subtext">Les charges mensuelles et l'absence de services de sécurité sont les premiers facteurs poussant les clients vers la détraction (SHAP).</div>
+            <div class="kpi-subtext">Les charges mensuelles et l'absence d'options de sécurité sont les premiers facteurs poussant les clients vers la détraction (SHAP).</div>
         </div>
         """, unsafe_allow_html=True)
 
     with h3:
         st.markdown("""
-        <div class="kpi-card">
+        <div class="kpi-card" style="min-height: 140px;">
             <div class="kpi-label">Équité & Conformité</div>
             <div style="font-size: 1.05rem; font-weight: 800; color: #0F172A; margin: 0.3rem 0;">Audit Anti-Biais Actif</div>
-            <div class="kpi-subtext">Le modèle a éliminé les biais géographiques et familiaux directs pour garantir un traitement équitable de l'ensemble des segments clients.</div>
+            <div class="kpi-subtext">Le modèle a éliminé les proxys géographiques et familiaux directs pour garantir un traitement équitable de l'ensemble des segments.</div>
         </div>
         """, unsafe_allow_html=True)
