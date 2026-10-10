@@ -136,7 +136,7 @@ def render_monitoring_view(pipeline, labeled_df, splits_df):
             })
 
         psi_df = pd.DataFrame(psi_records)
-        st.dataframe(psi_df, hide_index=True, use_container_width=True)
+        st.dataframe(psi_df, hide_index=True, width="stretch")
 
         st.write("")
         st.markdown("### Règles de Déclenchement de Ré-Entraînement")

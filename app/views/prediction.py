@@ -56,7 +56,7 @@ def render_prediction_view(pipeline, labeled_df, splits_df):
                 "Tenure Months", "Contract", "Monthly Charges", "Total Charges",
                 "Internet Service", "Payment Method", "Tech Support", "Online Security"
             ]
-            st.dataframe(customer_row[preview_cols], hide_index=True, use_container_width=True)
+            st.dataframe(customer_row[preview_cols], hide_index=True, width="stretch")
 
         if st.button("Lancer le diagnostic client", key="btn_score_existing", type="primary"):
             selected_raw_row = customer_row

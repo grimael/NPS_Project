@@ -154,7 +154,7 @@ def render_campaigns_view(pipeline, labeled_df, splits_df):
         st.dataframe(
             filtered_df[export_cols].head(10),
             hide_index=True,
-            use_container_width=True,
+            width="stretch",
         )
 
         st.download_button(
