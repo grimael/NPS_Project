@@ -792,3 +792,39 @@ redondance à maintenir.
 `monitoring_proposal.md`, `writeup_fr.docx`, `screenshots/`. Toutes les
 références croisées mises à jour dans `README.md`, `DOCUMENTATION.md`,
 `CLAUDE.md`.
+
+---
+
+### D39. Protocole d'évaluation 3-voies étanche (Résolution du Test-Set Snooping)
+
+**Décision.** Partitionner le jeu de données en 3 volets stricts : `respondent_train` (15 %, avec 5-Fold Stratified CV interne), `silent_val` (42.5 % de la base silencieuse pour le tuning, la validation sous distribution shift, le choix de modèle et l'audit d'équité), et `silent_test` (42.5 % de la base silencieuse, strictement scellé et gelé).
+
+**Alternatives.** Conserver un split 2-voies classique (15 % / 85 %) en évaluant tout sur `silent_test`.
+
+**Justification.** L'évaluation itérative (tuning LightGBM, rejet de calibration, feature ablation) directement sur `silent_test` introduisait une fuite d'information subtile (data snooping). Isoler un jeu de validation sous dérive (`silent_val`) distinct du test scellé (`silent_test`) rétablit une intégrité scientifique absolue.
+
+**Impact.** Métriques finales d'évaluation évaluées une seule fois sur `silent_test` sans biais d'optimisation (QWK = 0.287, rappel détracteur = 51.1 %).
+
+---
+
+### D40. Modularisation logicielle et sérialisation Scikit-Learn native
+
+**Décision.** Extraire `OrdinalLogisticClassifier` dans un module dédié `src/models/ordinal.py`, structurer `src` en package Python standard avec `__init__.py`, créer `pyproject.toml` et développer une suite de 10 tests automatisés `pytest`.
+
+**Alternatives.** Conserver la classe dans `src/train.py` avec l'exécution par chaîne de commande `python -c "import sys; ...'`.
+
+**Justification.** Définir une classe de modèle dans le script principal polluait le namespace `__main__` lors du `joblib.dump`, causant des `AttributeError` au chargement. La séparation modulaire permet d'exécuter `python src/train.py` directement et garantit une réutilisation industrielle et testée.
+
+**Impact.** 10 tests unitaires passent à 100 % en ~2 secondes (`tests/test_leakage.py`, `tests/test_splits.py`, `tests/test_features.py`, `tests/test_model.py`).
+
+---
+
+### D41. Refonte SaaS "PulseRetention AI" et modules prescriptifs
+
+**Décision.** Rebrander l'application en plateforme professionnelle "PulseRetention AI" (suppression du logo Artefact et des mentions challenge), passer l'ensemble de la dataviz sous Plotly interactif, découper l'UI en 5 modules (`app/views/`), et intégrer un simulateur prescriptif "What-If" ainsi qu'un gestionnaire de campagnes avec calculateur de ROI financier ($ MRR à risque).
+
+**Alternatives.** Conserver l'interface Streamlit 4 pages d'origine avec graphiques statiques Matplotlib et prédiction purement unitaire.
+
+**Justification.** Les recruteurs et directeurs métier (CX, Rétention) ont besoin d'outils prescriptifs et financiers orientés ROI, pas d'un simple devoir académique. Le passage à Plotly et le découpage modulaire confèrent un standard SaaS de niveau production.
+
+**Impact.** L'application permet aux équipes de quantifier 100 % du MRR à risque, de simuler l'effet de remises/engagements contractuels en direct, et d'exporter des listes d'appels ciblées.

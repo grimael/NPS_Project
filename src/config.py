@@ -86,8 +86,13 @@ NOISY_LABEL_REASSIGNMENT_RATE = 0.10
 # --------------------------------------------------------------------------
 # Realistic ("silent majority") split
 # --------------------------------------------------------------------------
-
+# 15% voluntary survey respondents (reflecting typical telecom response rates:
+# Anderson 1998, TM Forum 2021). The remaining 85% silent base is split 50/50 into
+# an out-of-domain validation set (silent_val) for tuning/decisions and an
+# untouched holdout test set (silent_test) to eliminate test-set snooping.
 RESPONDENT_FRACTION = 0.15
+SILENT_VAL_FRACTION = 0.50
+SILENT_TEST_FRACTION = 0.50
 
 RANDOM_SPLIT_TEST_SIZE = 0.30
 

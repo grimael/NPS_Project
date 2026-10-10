@@ -5,7 +5,9 @@ lightgbm>=4.3
 mord>=0.7
 shap>=0.45
 matplotlib>=3.8
+plotly>=5.20
 streamlit>=1.33
+pytest>=8.0
 sentence-transformers>=2.6
 anthropic>=0.25  # optional: unused now that VERBATIM_PROVIDER=gemini, see .env.example
 groq>=0.11  # optional: free/cheap VERBATIM_PROVIDER=groq validation path, see .env.example

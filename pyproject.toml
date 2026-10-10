@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "telcopulse"
+version = "1.0.0"
+description = "TelcoPulse AI - Telecom Customer NPS & Retention Intelligence Platform"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "Michaël G." }
+]
+dependencies = [
+    "pandas>=2.2",
+    "numpy>=1.26",
+    "scikit-learn>=1.4",
+    "lightgbm>=4.3",
+    "mord>=0.7",
+    "shap>=0.45",
+    "plotly>=5.20",
+    "streamlit>=1.33",
+    "openpyxl>=3.1",
+    "pyarrow>=15.0",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "sentence-transformers>=2.6",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --strict-markers"
