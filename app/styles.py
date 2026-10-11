@@ -1,4 +1,4 @@
-"""Design system, modern CSS styling, and UI components for TelcoPulse AI.
+"""Design system, modern CSS styling, and UI components for NPS Intelligence.
 Ultra-Premium Executive Design with Zero Emojis and Cohesive Palette.
 """
 
@@ -229,7 +229,21 @@ def get_custom_css() -> str:
     }}
 
     body:has(section[data-testid="stSidebar"][aria-expanded="false"]) header [data-testid="stExpandSidebarButton"] {{
+        position: fixed !important;
+        top: 0.75rem !important;
+        left: 0.75rem !important;
+        right: auto !important;
+        z-index: 1000001 !important;
         display: inline-flex !important;
+        width: 2.5rem !important;
+        height: 2.5rem !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 10px !important;
+        background: #FFFFFF !important;
+        border: 1px solid #D8DEE9 !important;
+        color: #0F172A !important;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16) !important;
     }}
 
     body:has(section[data-testid="stSidebar"][aria-expanded="false"]) header [data-testid="stToolbar"] button[data-testid="stBaseButton-header"] {{

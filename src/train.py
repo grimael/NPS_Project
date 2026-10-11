@@ -66,7 +66,7 @@ def build_final_pipeline(alpha: float = 1.0, balanced: bool = True) -> Pipeline:
 
 def main() -> None:
     print("=" * 70)
-    print("TelcoPulse AI - Training & Validation Pipeline")
+    print("NPS Intelligence - Training & Validation Pipeline")
     print("=" * 70)
 
     labeled = pd.read_parquet(LABELED_DATASET_PATH)

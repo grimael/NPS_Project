@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ TelcoPulse AI — Documentation Technique & Méthodologique (v2.0)
+# ⚡ NPS Intelligence — Documentation Technique & Méthodologique (v2.0)
 ### *Customer NPS Prediction, Prescriptive Retention & Revenue Risk Platform*
 
 ![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)
@@ -36,7 +36,7 @@ déploiement de la plateforme de rétention, avec validation empirique et réfé
 - [6. Phase 3 — Modélisation approfondie](#6-phase-3--modélisation-approfondie)
 - [7. Interprétabilité : SHAP et drivers de détraction](#7-interprétabilité--shap-et-drivers-de-détraction)
 - [8. Phase 4 — Audit d'équité démographique](#8-phase-4--audit-déquité-démographique)
-- [9. Phase 5 — Plateforme Opérationnelle PulseRetention](#9-phase-5--plateforme-opérationnelle-pulseretention)
+- [9. Phase 5 — Plateforme Opérationnelle NPS Intelligence](#9-phase-5--plateforme-opérationnelle-nps-intelligence)
   - [Navigation, ergonomie responsive et dataviz](#navigation-ergonomie-responsive-et-dataviz)
 - [10. Reproductibilité & MLOps](#10-reproductibilité--mlops)
 
@@ -76,7 +76,7 @@ flowchart LR
     D --> E["features.py<br/>35 features<br/>7 groupes métier"]
     E --> F["train.py<br/>src.models.ordinal<br/>OrdinalLogisticClassifier"]
     F --> G[("final_model.joblib")]
-    G --> H["app/streamlit_app.py<br/>Plateforme Modulaire<br/>PulseRetention AI"]
+    G --> H["app/streamlit_app.py<br/>Plateforme Modulaire<br/>NPS Intelligence"]
     D --> I["tests/<br/>Suite Pytest (10 tests)"]
 
     style G fill:#16284A,color:#fff
@@ -102,7 +102,7 @@ flowchart LR
 │   ├── processed/               # Dataset analytique, labels & splits Parquet
 │   └── verbatims/               # Verbatims synthétiques FR (7 043 clients)
 ├── src/
-│   ├── __init__.py              # Package TelcoPulse
+│   ├── __init__.py              # Package NPS Intelligence
 │   ├── config.py                # Configuration centrale, seed=42, blacklist anti-fuite
 │   ├── make_dataset.py          # Traitement brut -> analytique
 │   ├── build_target.py          # Cible ordinale et test de sensibilité
@@ -596,7 +596,7 @@ prédictions live du dashboard.
 
 ---
 
-## 9. Phase 5 — Plateforme Opérationnelle PulseRetention AI
+## 9. Phase 5 — Plateforme Opérationnelle NPS Intelligence
 
 La plateforme Streamlit (`app/streamlit_app.py`) a été entièrement modularisée et enrichie pour transformer le projet en un véritable outil de décision SaaS à destination des directeurs Customer Experience et des équipes Rétention.
 

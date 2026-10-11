@@ -1,4 +1,4 @@
-"""Data loading, caching, inference and explanation services for PulseRetention AI."""
+"""Data loading, caching, inference and explanation services for NPS Intelligence."""
 from pathlib import Path
 import sys
 

@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ TelcoPulse AI — Plateforme d'Intelligence Client & Rétention NPS
+# ⚡ NPS Intelligence — Plateforme d'Intelligence Client & Rétention NPS
 ### *Customer NPS Prediction, Prescriptive Retention & Revenue Risk Intelligence for Telecom Operators*
 
 ![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)
@@ -25,7 +25,7 @@ L'équipe Rétention se retrouve aveugle face aux **85 % restants (la base silen
 * Quel est le volume de revenu mensuel exposé au churn ($ MRR) ?
 * Quelles actions opérationnelles (durée de contrat, remise, options de sécurité) réduisent efficacement le risque ?
 
-**TelcoPulse AI** résout ce défi grâce à une modélisation ordinale robuste, un protocole d'évaluation étanche sous dérive de distribution, et un tableau de bord d'aide à la décision prescriptif.
+**NPS Intelligence** résout ce défi grâce à une modélisation ordinale robuste, un protocole d'évaluation étanche sous dérive de distribution, et un tableau de bord d'aide à la décision prescriptif.
 
 ---
 
@@ -94,7 +94,7 @@ contexte. Pour les détails d'interprétation et les limites, voir
 
 **Vue d'ensemble — indicateurs clés, sentiment NPS et exposition au churn**
 
-![Tableau de bord TelcoPulse AI : KPIs, répartition NPS et détracteurs par contrat](docs/screenshots/dashboard-overview.png)
+![Tableau de bord NPS Intelligence : KPIs, répartition NPS et détracteurs par contrat](docs/screenshots/dashboard-overview.png)
 
 **Campagnes & ROI — filtres de ciblage, simulation financière et liste opérationnelle**
 
@@ -155,10 +155,10 @@ Le projet intègre un `Dockerfile` optimisé pour un déploiement cloud immédia
 
 ```powershell
 # Construction de l'image
-docker build -t telcopulse-ai .
+docker build -t nps-intelligence .
 
 # Lancement du conteneur
-docker run -p 8501:8501 telcopulse-ai
+docker run -p 8501:8501 nps-intelligence
 ```
 
 ---
@@ -181,7 +181,7 @@ docker run -p 8501:8501 telcopulse-ai
 │   ├── processed/           # Dataset analytique, labels & splits Parquet
 │   └── verbatims/           # Verbatims synthétiques FR (étude NLP)
 ├── src/
-│   ├── __init__.py          # Package TelcoPulse
+│   ├── __init__.py          # Package NPS Intelligence
 │   ├── config.py            # Chemins, seed=42, blacklist anti-fuite
 │   ├── make_dataset.py      # Traitement brut -> analytique
 │   ├── build_target.py      # Construction de la cible ordinale

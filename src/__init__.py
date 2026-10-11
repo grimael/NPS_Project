@@ -1,2 +1,2 @@
-"""TelcoPulse / NPS Intelligence Package."""
+"""NPS Intelligence package."""
 __version__ = "1.0.0"

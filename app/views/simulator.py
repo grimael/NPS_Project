@@ -1,4 +1,4 @@
-"""What-If Prescriptive Action Simulator for TelcoPulse AI.
+"""What-If Prescriptive Action Simulator for NPS Intelligence.
 
 Enables retention teams to simulate operational interventions (contract upgrades,
 discounting, security bundles, automatic payment) and measure their immediate

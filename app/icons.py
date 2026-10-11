@@ -1,4 +1,4 @@
-"""Minimalist SVG icons for PulseRetention AI. Replaces emojis with crisp vector graphics."""
+"""Minimalist SVG icons for NPS Intelligence. Replaces emojis with crisp vector graphics."""
 
 def icon_svg(name: str, size: int = 18, color: str = "currentColor") -> str:
     """Return inline SVG string for high-end UI."""

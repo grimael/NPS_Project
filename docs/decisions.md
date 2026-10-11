@@ -828,3 +828,15 @@ références croisées mises à jour dans `README.md`, `DOCUMENTATION.md`,
 **Justification.** Les recruteurs et directeurs métier (CX, Rétention) ont besoin d'outils prescriptifs et financiers orientés ROI, pas d'un simple devoir académique. Le passage à Plotly et le découpage modulaire confèrent un standard SaaS de niveau production.
 
 **Impact.** L'application permet aux équipes de quantifier 100 % du MRR à risque, de simuler l'effet de remises/engagements contractuels en direct, et d'exporter des listes d'appels ciblées.
+
+---
+
+### D42. Rebranding de la plateforme en NPS Intelligence
+
+**Décision.** Remplacer le nom de marque actif « PulseRetention AI » / « TelcoPulse AI » par « NPS Intelligence » dans l'interface, les métadonnées du projet, les commandes Docker et la documentation courante.
+
+**Alternatives.** Conserver l'ancien nom TelcoPulse AI ou adopter un nom limité à la prédiction comme « NPS Prediction ».
+
+**Justification.** « NPS Intelligence » couvre l'ensemble des fonctionnalités de scoring, de diagnostic, de simulation prescriptive, de campagnes, d'équité et de MLOps, au-delà de la seule prédiction.
+
+**Impact.** La plateforme et sa distribution Python utilisent désormais une identité cohérente ; les mentions historiques du nom précédent restent dans ce journal pour préserver le contexte des décisions antérieures.

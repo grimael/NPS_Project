@@ -1,4 +1,4 @@
-"""Fairness Audit & MLOps Drift Monitoring View for TelcoPulse AI."""
+"""Fairness Audit & MLOps Drift Monitoring View for NPS Intelligence."""
 import plotly.graph_objects as go
 import streamlit as st
 import numpy as np

@@ -1,4 +1,4 @@
-"""Campaign Manager & Business ROI Calculator for TelcoPulse AI."""
+"""Campaign Manager & Business ROI Calculator for NPS Intelligence."""
 import io
 import plotly.express as px
 import streamlit as st

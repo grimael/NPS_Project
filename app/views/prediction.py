@@ -1,4 +1,4 @@
-"""Individual Customer Prediction & SHAP Diagnostics View for TelcoPulse AI."""
+"""Individual Customer Prediction & SHAP Diagnostics View for NPS Intelligence."""
 import plotly.graph_objects as go
 import streamlit as st
 import pandas as pd

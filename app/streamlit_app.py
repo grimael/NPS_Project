@@ -1,4 +1,4 @@
-"""TelcoPulse AI - Enterprise Customer Retention & NPS Intelligence Platform.
+"""NPS Intelligence - Enterprise Customer Retention & NPS Intelligence Platform.
 
 Main entry point for the Streamlit dashboard application.
 Modularized architecture:
@@ -35,7 +35,7 @@ from src.config import FINAL_MODEL_PATH
 
 # 1. Page Configuration
 st.set_page_config(
-    page_title="TelcoPulse AI — Plateforme d'Intelligence Client & Rétention",
+    page_title="NPS Intelligence — Plateforme d'Intelligence Client & Rétention",
     page_icon="💠",
     layout="wide",
     initial_sidebar_state="auto",
@@ -99,7 +99,7 @@ with st.sidebar:
                     {icon_svg("pulse", size=18, color="#FFFFFF")}
                 </div>
                 <div>
-                    <div class="brand-name">TelcoPulse AI</div>
+                    <div class="brand-name">NPS Intelligence</div>
                     <div class="brand-tag">Retention Intelligence</div>
                 </div>
             </div>

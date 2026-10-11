@@ -1,4 +1,4 @@
-"""Overview Page for TelcoPulse AI: Executive KPIs, NPS mix, and revenue at risk."""
+"""Overview Page for NPS Intelligence: Executive KPIs, NPS mix, and revenue at risk."""
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
@@ -150,7 +150,7 @@ def render_overview_view(labeled_df, splits_df):
         <div class="kpi-card" style="min-height: 135px;">
             <div class="kpi-label">Enjeu des Silencieux</div>
             <div style="font-size: 1.05rem; font-weight: 800; color: #0F172A; margin: 0.3rem 0;">85 % du parc sans enquête</div>
-            <div class="kpi-subtext">Sans IA, l'équipe rétention ignore l'insatisfaction de 5 987 clients. TelcoPulse détecte leurs signaux avec 51% de rappel.</div>
+            <div class="kpi-subtext">Sans IA, l'équipe rétention ignore l'insatisfaction de 5 987 clients. NPS Intelligence détecte leurs signaux avec 51% de rappel.</div>
         </div>
         """, unsafe_allow_html=True)
 
