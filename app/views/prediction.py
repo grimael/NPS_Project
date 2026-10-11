@@ -8,6 +8,7 @@ from app.styles import (
     COLOR_PASSIVE,
     COLOR_PROMOTER,
     NPS_COLOR_MAP,
+    get_plotly_layout_template,
 )
 from app.utils import (
     CATEGORICAL_OPTIONS,
@@ -150,11 +151,12 @@ def render_prediction_view(pipeline, labeled_df, splits_df):
                     x=[val],
                     orientation="h",
                     name=cat,
-                    marker=dict(color=NPS_COLOR_MAP[cat]),
+                    marker=dict(color=NPS_COLOR_MAP[cat], line=dict(color="#FFFFFF", width=1)),
                     text=[f"<b>{val:.1%}</b>"],
                     textposition="inside",
-                    hoverinfo="name+x",
+                    hovertemplate=f"{cat}: %{{x:.1%}}<extra></extra>",
                 ))
+            fig_p.update_layout(**get_plotly_layout_template())
             fig_p.update_layout(
                 barmode="group",
                 showlegend=False,
@@ -174,7 +176,7 @@ def render_prediction_view(pipeline, labeled_df, splits_df):
             with st.spinner("Extraction des valeurs SHAP locales..."):
                 top_names, top_values = explain_prediction(pipeline, X_row, pred, background_sample)
 
-            colors = [NPS_COLOR_MAP[pred] if v > 0 else "#94A3B8" for v in top_values]
+            colors = [NPS_COLOR_MAP[pred] if v > 0 else "#AEB8C8" for v in top_values]
             fig_shap = go.Figure(go.Bar(
                 y=top_names[::-1],
                 x=top_values[::-1],
@@ -182,7 +184,11 @@ def render_prediction_view(pipeline, labeled_df, splits_df):
                 marker=dict(color=colors[::-1]),
                 text=[f"{v:+.3f}" for v in top_values[::-1]],
                 textposition="auto",
+                marker_line_color="#FFFFFF",
+                marker_line_width=1,
+                hovertemplate="%{y}<br>Impact SHAP: %{x:+.3f}<extra></extra>",
             ))
+            fig_shap.update_layout(**get_plotly_layout_template())
             fig_shap.update_layout(
                 height=240,
                 margin=dict(t=10, b=10, l=10, r=20),

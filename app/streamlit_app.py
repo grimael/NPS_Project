@@ -38,7 +38,7 @@ st.set_page_config(
     page_title="TelcoPulse AI — Plateforme d'Intelligence Client & Rétention",
     page_icon="💠",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",
 )
 
 # 2. Inject Modern CSS Styling
@@ -88,23 +88,23 @@ NAVIGATION_PAGES = {
 }
 
 # 5. Sidebar Branding & Navigation
+if "current_page" not in st.session_state:
+    st.session_state.current_page = "overview"
+
 with st.sidebar:
     st.markdown(f"""
-    <div class="sidebar-brand-box">
-        <div class="brand-title-wrap">
-            <div class="brand-logo-icon">
-                {icon_svg("pulse", size=18, color="#FFFFFF")}
-            </div>
-            <div>
-                <div class="brand-name">TelcoPulse AI</div>
-                <div class="brand-tag">Retention Intelligence</div>
+        <div class="sidebar-brand-box">
+            <div class="brand-title-wrap">
+                <div class="brand-logo-icon">
+                    {icon_svg("pulse", size=18, color="#FFFFFF")}
+                </div>
+                <div>
+                    <div class="brand-name">TelcoPulse AI</div>
+                    <div class="brand-tag">Retention Intelligence</div>
+                </div>
             </div>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    if "current_page" not in st.session_state:
-        st.session_state.current_page = "overview"
+        """, unsafe_allow_html=True)
 
     for page_key, (page_label, _, _) in NAVIGATION_PAGES.items():
         is_selected = (st.session_state.current_page == page_key)
@@ -114,14 +114,14 @@ with st.sidebar:
 
     st.sidebar.markdown("---")
     st.sidebar.markdown("""
-    <div style="color:#94A3B8; font-size: 0.72rem; line-height: 1.5; padding: 0.2rem 0.5rem;">
-        <span style="color:#FFFFFF; font-weight:700;">Système en Production v2.0</span><br>
-        • Modèle : Ordinal Logistic (mord)<br>
-        • Parc Silencieux : 5 987 clients<br>
-        • Validation : Split 3-voies étanche<br>
-        • Reproductibilité : Seed 42
-    </div>
-    """, unsafe_allow_html=True)
+        <div style="color:#94A3B8; font-size: 0.72rem; line-height: 1.5; padding: 0.2rem 0.5rem;">
+            <span style="color:#FFFFFF; font-weight:700;">Système en Production v2.0</span><br>
+            • Modèle : Ordinal Logistic (mord)<br>
+            • Parc Silencieux : 5 987 clients<br>
+            • Validation : Split 3-voies étanche<br>
+            • Reproductibilité : Seed 42
+        </div>
+        """, unsafe_allow_html=True)
 
 # 6. Page Hero Header & View Routing
 current_view = st.session_state.current_page

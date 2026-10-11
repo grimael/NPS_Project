@@ -37,6 +37,7 @@ déploiement de la plateforme de rétention, avec validation empirique et réfé
 - [7. Interprétabilité : SHAP et drivers de détraction](#7-interprétabilité--shap-et-drivers-de-détraction)
 - [8. Phase 4 — Audit d'équité démographique](#8-phase-4--audit-déquité-démographique)
 - [9. Phase 5 — Plateforme Opérationnelle PulseRetention](#9-phase-5--plateforme-opérationnelle-pulseretention)
+  - [Navigation, ergonomie responsive et dataviz](#navigation-ergonomie-responsive-et-dataviz)
 - [10. Reproductibilité & MLOps](#10-reproductibilité--mlops)
 
 ---
@@ -607,11 +608,51 @@ Cinq modules intégrés, navigation latérale réactive :
 | **🔍 Scoring & Diagnostic** | Recherche client ou saisie manuelle, probabilités 3 classes avec jauges interactives, Top 5 drivers SHAP | Analyse fine du mécontentement pour préparer l'appel de rétention. |
 | **🛠️ Simulateur Prescriptif ("What-If")** | Test en direct des leviers de fidélisation (contrat annuel, remise de 10 $, pack sécurité/support) | Visualisation immédiate de la baisse du risque de détraction et arbitrage coût/gain. |
 | **🎯 Campagnes & ROI ($ MRR)** | Segmentation multi-critères, simulation de rentabilité (taux de conversion vs coût de contact, MRR sauvé) | Génération et téléchargement CSV des listes d'appels ciblées pour les télévendeurs. |
-| **⚖️ Équité & MLOps** | Audit des disparités de rappel par groupe démographique, suivi de dérive PSI (Population Stability Index) | Gouvernance éthique et déclencheurs de ré-entraînement automatisés. |
+| **⚖️ Équité & MLOps** | Audit des disparités de rappel par groupe démographique avec huit anneaux de rappel (détectés / non détectés), suivi de dérive PSI (Population Stability Index) | Gouvernance éthique et déclencheurs de ré-entraînement automatisés. |
+
+### Navigation, ergonomie responsive et dataviz
+
+Le bandeau de page est fixé en haut de la zone principale et occupe toute sa
+largeur : sur grand écran, il commence après la navigation latérale ; sur
+petit écran, il s'étend sur la largeur de la page sous la barre de contrôle
+Streamlit. Le titre de page et son badge restent visibles pendant le défilement.
+Le libellé de marque n'est pas répété dans le bandeau : il reste dans la
+navigation latérale.
+
+La navigation latérale est repliée automatiquement sur les écrans étroits.
+Le bouton natif Streamlit placé dans la barre supérieure sert à ouvrir ou
+fermer le menu ; il n'y a pas de second bouton applicatif qui dupliquerait
+ce contrôle. Les rangées de colonnes s'enroulent selon la largeur disponible,
+et les cartes passent à une colonne sur les écrans de téléphone.
+
+Les graphiques interactifs utilisent un thème Plotly partagé (`app/styles.py`)
+avec fond transparent, typographie commune, axes et grilles à contraste doux,
+infobulles foncées et contours clairs autour des séries. La palette sémantique
+NPS est cohérente d'une vue à l'autre :
+
+| Classe / série | Couleur |
+|---|---|
+| Détracteur | `#C96F7B` — rose terre cuite |
+| Passif | `#D3A85C` — or doux |
+| Promoteur | `#438F7B` — vert émeraude |
+
+Dans l'audit d'équité, chaque anneau représente un sous-groupe démographique.
+La part colorée correspond au rappel détracteur (parmi les détracteurs réels
+du sous-groupe) et la part gris clair aux détracteurs non détectés. Les deux
+sous-groupes d'une dimension sont affichés côte à côte, avec une couleur
+d'accent distincte, le pourcentage au centre et l'effectif réel en légende
+sous le graphique. `N/D` signale un sous-groupe ne contenant aucun détracteur ;
+il ne faut pas interpréter ce cas comme un rappel nul.
+
+Les donuts de cette page facilitent la comparaison visuelle, mais ne
+remplacent pas les effectifs et les métriques sous-jacentes. L'audit est
+calculé sur la partition `silent_test` et ne constitue pas un suivi en temps
+réel ni une preuve d'absence de biais pour toutes les populations.
 
 ### Choix d'Ingénierie & Design System
 * **Architecture Modulaire :** Code découplé en sous-modules (`app/views/`, `app/styles.py`, `app/utils.py`), éliminant tout fichier monolithique.
-* **Dataviz Interactive (Plotly) :** Remplacement des graphiques statiques Matplotlib par des graphiques interactifs (tooltips précis, responsive, filtres en direct).
+* **Dataviz Interactive (Plotly) :** Palette sémantique cohérente, infobulles précises, graphiques responsives et anneaux de rappel explicites pour l'audit d'équité.
+* **Ergonomie responsive :** Bandeau fixe pleine largeur, navigation repliable sur téléphone et cartes empilées sur les petits écrans.
 * **Zéro Hardcoding :** Les métriques sont recalculées dynamiquement à partir de `final_model.joblib` et invalidées proprement par horodatage (`mtime`).
 * **Packaging de Production :** `Dockerfile` autonome permettant le déploiement immédiat sur n'importe quelle plateforme Cloud (Streamlit Community Cloud, AWS, GCP, Render).
 

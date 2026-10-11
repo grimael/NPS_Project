@@ -13,6 +13,7 @@ from app.styles import (
     COLOR_PASSIVE,
     COLOR_PROMOTER,
     NPS_COLOR_MAP,
+    get_plotly_layout_template,
 )
 from app.utils import predict_single_customer
 from src.config import ID_COL, NPS_CATEGORIES
@@ -147,19 +148,28 @@ def render_simulator_view(pipeline, labeled_df, splits_df):
         x=NPS_CATEGORIES,
         y=[base_proba[c] for c in NPS_CATEGORIES],
         name="Avant Intervention",
-        marker_color="#94A3B8",
+        marker={
+            "color": [NPS_COLOR_MAP[c] for c in NPS_CATEGORIES],
+            "opacity": 0.42,
+            "line": {"color": "#FFFFFF", "width": 1.5},
+        },
         text=[f"{base_proba[c]:.1%}" for c in NPS_CATEGORIES],
         textposition="outside",
+        hovertemplate="%{x}<br>Avant : %{y:.1%}<extra></extra>",
     ))
     fig_comp.add_trace(go.Bar(
         x=NPS_CATEGORIES,
         y=[sim_proba[c] for c in NPS_CATEGORIES],
         name="Après Intervention (Simulée)",
         marker_color=[COLOR_DETRACTOR, COLOR_PASSIVE, COLOR_PROMOTER],
+        marker_line_color="#FFFFFF",
+        marker_line_width=1.5,
         text=[f"{sim_proba[c]:.1%}" for c in NPS_CATEGORIES],
         textposition="outside",
+        hovertemplate="%{x}<br>Après : %{y:.1%}<extra></extra>",
     ))
 
+    fig_comp.update_layout(**get_plotly_layout_template())
     fig_comp.update_layout(
         barmode="group",
         height=320,

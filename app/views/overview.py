@@ -8,6 +8,7 @@ from app.styles import (
     COLOR_PASSIVE,
     COLOR_PROMOTER,
     NPS_COLOR_MAP,
+    get_plotly_layout_template,
 )
 from app.utils import compute_executive_kpis, get_file_signature
 from src.config import FINAL_MODEL_PATH, NPS_CATEGORIES, TARGET_COL
@@ -58,8 +59,9 @@ def render_overview_view(labeled_df, splits_df):
 
     st.write("")
 
-    # 2. Charts Row: NPS Mix (Donut) & Tenure Breakdown (Interactive Plotly)
-    col_chart1, col_chart2 = st.columns([1, 1.2])
+    # 2. Charts Row: Captivating Ultra-Premium Plotly Visuals
+    col_chart1, col_chart2 = st.columns([1, 1.25])
+    plotly_layout = get_plotly_layout_template()
 
     with col_chart1:
         st.markdown('<div class="section-eyebrow">Diagnostic Global</div>', unsafe_allow_html=True)
@@ -69,23 +71,30 @@ def render_overview_view(labeled_df, splits_df):
         fig_donut = go.Figure(data=[go.Pie(
             labels=NPS_CATEGORIES,
             values=counts.values,
-            hole=0.62,
-            marker_colors=[COLOR_DETRACTOR, COLOR_PASSIVE, COLOR_PROMOTER],
+            hole=0.64,
+            sort=False,
+            direction="clockwise",
+            rotation=270,
+            marker=dict(
+                colors=[COLOR_DETRACTOR, COLOR_PASSIVE, COLOR_PROMOTER],
+                line=dict(color="#FFFFFF", width=3),
+            ),
             textinfo="label+percent",
             hoverinfo="label+value+percent",
             textposition="outside",
+            textfont=dict(size=12, family="Plus Jakarta Sans", color="#0F172A"),
         )])
-        fig_donut.update_layout(
+        donut_layout = dict(plotly_layout)
+        donut_layout.update(
             showlegend=False,
-            margin=dict(t=20, b=20, l=20, r=20),
-            height=320,
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
+            margin=dict(t=25, b=25, l=25, r=25),
+            height=330,
             annotations=[dict(
-                text=f"<b>{len(labeled_df):,}</b><br><span style='font-size:12px;color:#64748B;'>Clients</span>",
-                x=0.5, y=0.5, font_size=18, showarrow=False, align="center"
+                text=f"<b style='font-size:22px;color:#0F172A;'>{len(labeled_df):,}</b><br><span style='font-size:12px;color:#64748B;'>Clients</span>",
+                x=0.5, y=0.5, showarrow=False, align="center"
             )]
         )
+        fig_donut.update_layout(**donut_layout)
         st.plotly_chart(fig_donut, use_container_width=True)
         st.caption("Distribution dérivée du Satisfaction Score sur le parc client (IBM Telco v11.1.3+).")
 
@@ -104,15 +113,28 @@ def render_overview_view(labeled_df, splits_df):
             barmode="stack",
             labels={"count": "Nombre de clients", "Contract": "Type de contrat"},
         )
-        fig_bar.update_layout(
-            margin=dict(t=20, b=20, l=20, r=20),
-            height=320,
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-            xaxis=dict(showgrid=False),
-            yaxis=dict(gridcolor="#E2E8F0"),
+        fig_bar.update_traces(
+            marker_line_color="#FFFFFF",
+            marker_line_width=1.5,
+            hovertemplate="%{x}<br>%{fullData.name}: %{y:,} clients<extra></extra>",
         )
+        bar_layout = dict(plotly_layout)
+        bar_layout.update(
+            margin=dict(t=25, b=25, l=20, r=20),
+            height=330,
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=1,
+                font=dict(size=11, family="Plus Jakarta Sans"),
+                title_text="",
+            ),
+            xaxis=dict(showgrid=False, title="", tickfont=dict(size=11, color="#475569")),
+            yaxis=dict(gridcolor="#E5EAF2", title="Clients", tickfont=dict(size=11, color="#475569")),
+        )
+        fig_bar.update_layout(**bar_layout)
         st.plotly_chart(fig_bar, use_container_width=True)
         st.caption("Forte concentration des détracteurs sur les contrats sans engagement (Month-to-month).")
 
@@ -125,7 +147,7 @@ def render_overview_view(labeled_df, splits_df):
     h1, h2, h3 = st.columns(3)
     with h1:
         st.markdown("""
-        <div class="kpi-card" style="min-height: 140px;">
+        <div class="kpi-card" style="min-height: 135px;">
             <div class="kpi-label">Enjeu des Silencieux</div>
             <div style="font-size: 1.05rem; font-weight: 800; color: #0F172A; margin: 0.3rem 0;">85 % du parc sans enquête</div>
             <div class="kpi-subtext">Sans IA, l'équipe rétention ignore l'insatisfaction de 5 987 clients. TelcoPulse détecte leurs signaux avec 51% de rappel.</div>
@@ -134,7 +156,7 @@ def render_overview_view(labeled_df, splits_df):
 
     with h2:
         st.markdown("""
-        <div class="kpi-card" style="min-height: 140px;">
+        <div class="kpi-card" style="min-height: 135px;">
             <div class="kpi-label">Levier n°1 de Détraction</div>
             <div style="font-size: 1.05rem; font-weight: 800; color: #0F172A; margin: 0.3rem 0;">Facture Mensuelle Élevée</div>
             <div class="kpi-subtext">Les charges mensuelles et l'absence d'options de sécurité sont les premiers facteurs poussant les clients vers la détraction (SHAP).</div>
@@ -143,7 +165,7 @@ def render_overview_view(labeled_df, splits_df):
 
     with h3:
         st.markdown("""
-        <div class="kpi-card" style="min-height: 140px;">
+        <div class="kpi-card" style="min-height: 135px;">
             <div class="kpi-label">Équité & Conformité</div>
             <div style="font-size: 1.05rem; font-weight: 800; color: #0F172A; margin: 0.3rem 0;">Audit Anti-Biais Actif</div>
             <div class="kpi-subtext">Le modèle a éliminé les proxys géographiques et familiaux directs pour garantir un traitement équitable de l'ensemble des segments.</div>

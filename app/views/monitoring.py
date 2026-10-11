@@ -1,10 +1,11 @@
 """Fairness Audit & MLOps Drift Monitoring View for TelcoPulse AI."""
-import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 import numpy as np
 import pandas as pd
 
+from app.styles import ACCENT_INDIGO, ACCENT_SUN, ACCENT_TEAL, ACCENT_VIOLET
+from app.styles import COLOR_DETRACTOR, COLOR_PASSIVE, COLOR_PROMOTER, get_plotly_layout_template
 from src.config import ID_COL, TARGET_COL
 from src.features import CATEGORICAL_FEATURES, NUMERIC_FEATURES, build_feature_matrix
 
@@ -78,27 +79,99 @@ def render_monitoring_view(pipeline, labeled_df, splits_df):
 
         fairness_df = pd.DataFrame(fairness_data)
 
-        fig_fair = px.bar(
-            fairness_df,
-            x="Rappel Détracteur",
-            y="Sous-groupe",
-            orientation="h",
-            color="Rappel Détracteur",
-            color_continuous_scale="Blues",
-            text="Rappel Détracteur",
-            labels={"Rappel Détracteur": "Taux de Détection (Rappel)"},
-        )
-        fig_fair.update_traces(texttemplate="%{text:.1%}", textposition="outside")
-        fig_fair.update_layout(
-            height=320,
-            margin=dict(t=20, b=20, l=20, r=20),
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            xaxis=dict(range=[0, 0.85], tickformat=".0%", gridcolor="#E2E8F0"),
-            yaxis=dict(showgrid=False),
-            coloraxis_showscale=False,
-        )
-        st.plotly_chart(fig_fair, use_container_width=True)
+        subgroup_colors = [
+            ACCENT_INDIGO, ACCENT_TEAL,
+            ACCENT_VIOLET, ACCENT_SUN,
+            COLOR_PROMOTER, COLOR_DETRACTOR,
+            "#536A9C", COLOR_PASSIVE,
+        ]
+        fairness_by_subgroup = fairness_df.set_index("Sous-groupe")
+        fairness_layout = get_plotly_layout_template()
+        group_columns = st.columns(2)
+        subgroup_display_labels = {
+            "Female": "Femme",
+            "Male": "Homme",
+            "No": "Non",
+            "Yes": "Oui",
+        }
+
+        for group_index, (group_label, _, values) in enumerate(groups):
+            with group_columns[group_index % 2]:
+                st.markdown(
+                    f'<div class="fairness-donut-title">{group_label}</div>',
+                    unsafe_allow_html=True,
+                )
+                fig_fair = go.Figure()
+                annotations = []
+
+                for subgroup_index, value in enumerate(values):
+                    subgroup = f"{group_label} = {value}"
+                    metric = fairness_by_subgroup.loc[subgroup]
+                    recall = float(metric["Rappel Détracteur"])
+                    detractor_count = int(metric["Effectif (Détracteurs)"])
+                    display_value = subgroup_display_labels[value]
+                    x0, x1 = (0.02, 0.48) if subgroup_index == 0 else (0.52, 0.98)
+                    center_x = (x0 + x1) / 2
+                    accent = subgroup_colors[group_index * 2 + subgroup_index]
+
+                    fig_fair.add_trace(go.Pie(
+                        labels=["Détectés", "Non détectés"],
+                        values=[recall, 1 - recall] if detractor_count else [0, 1],
+                        name=subgroup,
+                        hole=0.72,
+                        sort=False,
+                        direction="clockwise",
+                        rotation=270,
+                        domain={"x": [x0, x1], "y": [0.08, 0.9]},
+                        marker={
+                            "colors": [accent, "#E8EDF4"],
+                            "line": {"color": "#FFFFFF", "width": 3},
+                        },
+                        textinfo="none",
+                        hovertemplate=(
+                            f"{subgroup}<br>%{{label}}: %{{percent}}"
+                            f"<br>Détracteurs: {detractor_count}<extra></extra>"
+                        ),
+                        showlegend=False,
+                    ))
+                    annotations.extend([
+                        {
+                            "text": display_value,
+                            "x": center_x,
+                            "y": 1.02,
+                            "xref": "paper",
+                            "yref": "paper",
+                            "showarrow": False,
+                            "font": {"size": 11, "color": "#475569"},
+                        },
+                        {
+                            "text": f"{recall:.0%}" if detractor_count else "N/D",
+                            "x": center_x,
+                            "y": 0.49,
+                            "xref": "paper",
+                            "yref": "paper",
+                            "showarrow": False,
+                            "font": {"size": 19, "color": "#0F172A", "family": "Plus Jakarta Sans"},
+                        },
+                    ])
+
+                layout = dict(fairness_layout)
+                layout.update(
+                    height=250,
+                    margin={"t": 28, "b": 4, "l": 4, "r": 4},
+                    showlegend=False,
+                    annotations=annotations,
+                )
+                fig_fair.update_layout(**layout)
+                st.plotly_chart(fig_fair, use_container_width=True)
+                counts = [
+                    int(fairness_by_subgroup.loc[f"{group_label} = {value}", "Effectif (Détracteurs)"])
+                    for value in values
+                ]
+                st.caption(
+                    f"Détracteurs réels dans chaque sous-groupe : "
+                    f"{values[0]} = {counts[0]:,} · {values[1]} = {counts[1]:,}"
+                )
 
         st.markdown("""
         <div class="callout-box">

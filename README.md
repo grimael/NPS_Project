@@ -72,7 +72,37 @@ L'application (`app/streamlit_app.py`) est organisée en 5 modules professionnel
 | **🔍 Scoring & Diagnostic** | Fiche client individuelle, probabilités de classe avec jauges interactives, top 5 drivers locaux SHAP, recommandations d'action. |
 | **🛠️ Simulateur Prescriptif ("What-If")** | Test en direct de leviers de rétention (passage en contrat annuel, remise de 10 $, add-on sécurité/support) et visualisation de la baisse de probabilité de détraction. |
 | **🎯 Campagnes & ROI ($ MRR)** | Outil de segmentation multi-critères, calcul en direct du ROI financier ($ MRR & ARR sauvés vs coût de contact), export CSV télévente. |
-| **⚖️ Équité & Monitoring MLOps** | Audit d'équité par groupe protégé (parité de rappel détracteur), suivi de dérive PSI (Population Stability Index), règles de ré-entraînement. |
+| **⚖️ Équité & Monitoring MLOps** | Comparaison du rappel détracteur par sous-groupe avec des donuts détectés / non détectés, suivi PSI (Population Stability Index) et règles de ré-entraînement. |
+
+### Présentation et usage sur mobile
+
+Le bandeau de chaque page reste fixe pendant le défilement et occupe toute la
+largeur disponible, sans répéter le nom de la plateforme. Sur téléphone, le
+menu latéral est repliable avec le contrôle natif Streamlit ; les cartes et
+colonnes s'empilent pour préserver la lisibilité.
+
+Les graphiques partagent une palette NPS cohérente : rose terre cuite pour les
+détracteurs, or doux pour les passifs et vert émeraude pour les promoteurs.
+Dans **Équité & MLOps**, quatre graphiques circulaires comparent les deux
+sous-groupes de chaque dimension protégée ; la portion colorée indique le
+rappel détracteur, et la portion neutre les détracteurs non détectés. Les
+effectifs restent indiqués pour éviter de comparer les seuls pourcentages hors
+contexte. Pour les détails d'interprétation et les limites, voir
+[`DOCUMENTATION.md`](DOCUMENTATION.md#navigation-ergonomie-responsive-et-dataviz).
+
+### Captures de la plateforme
+
+**Vue d'ensemble — indicateurs clés, sentiment NPS et exposition au churn**
+
+![Tableau de bord TelcoPulse AI : KPIs, répartition NPS et détracteurs par contrat](docs/screenshots/dashboard-overview.png)
+
+**Campagnes & ROI — filtres de ciblage, simulation financière et liste opérationnelle**
+
+![Module Campagnes et ROI : segmentation, indicateurs de rentabilité et clients ciblés](docs/screenshots/campaigns-roi.png)
+
+**Équité & MLOps — comparaison circulaire du rappel détracteur par sous-groupe**
+
+![Audit d'équité avec graphiques circulaires par genre, âge et situation familiale](docs/screenshots/equity-mlops.png)
 
 ---
 

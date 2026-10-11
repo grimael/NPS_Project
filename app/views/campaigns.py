@@ -4,17 +4,12 @@ import plotly.express as px
 import streamlit as st
 import pandas as pd
 
-from app.styles import NPS_COLOR_MAP
+from app.styles import NPS_COLOR_MAP, get_plotly_layout_template
 from src.config import ID_COL, TARGET_COL
 from src.features import CATEGORICAL_FEATURES, NUMERIC_FEATURES, build_feature_matrix
 
 
 def render_campaigns_view(pipeline, labeled_df, splits_df):
-    st.markdown("""
-    Ciblez des cohortes de clients à risque au sein de la base silencieuse, simulez le retour sur investissement d'une campagne
-    d'appels sortants et exportez la liste de travail pour l'équipe commerciale.
-    """)
-
     # Prepare silent cohort predictions
     merged = labeled_df.merge(splits_df, on=ID_COL)
     silent_cohort = merged[merged["split"].isin(["silent_val", "silent_test"])].copy().reset_index(drop=True)
@@ -22,7 +17,7 @@ def render_campaigns_view(pipeline, labeled_df, splits_df):
     feature_cols = NUMERIC_FEATURES + CATEGORICAL_FEATURES
     X_matrix = build_feature_matrix(silent_cohort, include_geo=False)[feature_cols]
 
-    with st.spinner("Scoring de la base silencieuse en cours..."):
+    with st.spinner("Scoring de la cohorte silencieuse en cours..."):
         preds = pipeline.predict(X_matrix)
         probas = pipeline.predict_proba(X_matrix)
 
@@ -30,8 +25,8 @@ def render_campaigns_view(pipeline, labeled_df, splits_df):
     silent_cohort["Detractor_Probability"] = probas[:, 0]
     silent_cohort["Promoter_Probability"] = probas[:, 2]
 
-    # Filters Section
-    st.markdown("### Critères de Ciblage de la Cohorte")
+    st.markdown('<div class="campaign-filters-header"><div class="campaign-filter-label">Critères de ciblage de la campagne</div></div>', unsafe_allow_html=True)
+
     f1, f2, f3, f4 = st.columns(4)
 
     with f1:
@@ -73,24 +68,46 @@ def render_campaigns_view(pipeline, labeled_df, splits_df):
 
     st.write("")
 
-    # Campaign KPIs (Concise, zero overflow)
     target_count = len(filtered_df)
     total_mrr_targeted = filtered_df["Monthly Charges"].sum() if target_count > 0 else 0.0
+    avg_charge = (total_mrr_targeted / target_count) if target_count > 0 else 0.0
 
+    st.markdown('<div class="campaign-kpi-grid">', unsafe_allow_html=True)
     k1, k2, k3 = st.columns(3)
     with k1:
-        st.metric("Clients Ciblés", f"{target_count:,}")
-    with k2:
-        st.metric("MRR Exposé au Churn", f"{total_mrr_targeted:,.0f} $")
-    with k3:
-        avg_charge = (total_mrr_targeted / target_count) if target_count > 0 else 0.0
-        st.metric("Facture Moyenne", f"{avg_charge:.2f} $")
+        st.markdown(f"""
+        <div class="campaign-kpi-card">
+            <div class="campaign-kpi-label">Clients ciblés</div>
+            <div class="campaign-kpi-value">{target_count:,}</div>
+            <div class="campaign-kpi-subtext">Clients éligibles pour l'action de rétention</div>
+        </div>
+        """, unsafe_allow_html=True)
 
+    with k2:
+        st.markdown(f"""
+        <div class="campaign-kpi-card">
+            <div class="campaign-kpi-label">MRR exposé au churn</div>
+            <div class="campaign-kpi-value">{total_mrr_targeted:,.0f} $</div>
+            <div class="campaign-kpi-subtext">Facturation mensuelle directe à risque</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with k3:
+        st.markdown(f"""
+        <div class="campaign-kpi-card">
+            <div class="campaign-kpi-label">Facture mensuelle moyenne</div>
+            <div class="campaign-kpi-value">{avg_charge:.2f} $</div>
+            <div class="campaign-kpi-subtext">Panier moyen par client ciblé</div>
+        </div>
+        """, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.write("")
     st.divider()
 
     # ROI Business Simulator
-    st.markdown('<div class="section-eyebrow">Simulation Financière</div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">Modélisation de la Rentabilité de la Campagne</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-eyebrow">Modélisation financière</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">Rentabilité prévisionnelle de la campagne d\'appels sortants</div>', unsafe_allow_html=True)
 
     r1, r2, r3 = st.columns(3)
     with r1:
@@ -129,20 +146,51 @@ def render_campaigns_view(pipeline, labeled_df, splits_df):
     annual_net_value = (net_saved_mrr * 12) - campaign_contact_cost
     roi_multiple = (annual_net_value / campaign_contact_cost) if campaign_contact_cost > 0 else 0.0
 
+    st.write("")
     c_fin1, c_fin2, c_fin3, c_fin4 = st.columns(4)
     with c_fin1:
-        st.metric("Clients Sauvegardés", f"{saved_customers:,}")
+        st.markdown(f"""
+        <div class="kpi-card">
+            <div class="kpi-label">Clients Sauvegardés</div>
+            <div class="kpi-value">{saved_customers:,}</div>
+            <div class="kpi-subtext">Rétention active réussie</div>
+        </div>
+        """, unsafe_allow_html=True)
+
     with c_fin2:
-        st.metric("MRR Net Sauvegardé", f"{net_saved_mrr:,.0f} $")
+        st.markdown(f"""
+        <div class="kpi-card">
+            <div class="kpi-label">MRR Net Sauvegardé</div>
+            <div class="kpi-value">{net_saved_mrr:,.0f} $</div>
+            <div class="kpi-subtext">Revenu mensuel récurrent préservé</div>
+        </div>
+        """, unsafe_allow_html=True)
+
     with c_fin3:
-        st.metric("Gain Annuel Net", f"{annual_net_value:,.0f} $")
+        st.markdown(f"""
+        <div class="kpi-card">
+            <div class="kpi-label">Gain Net Annuel (ARR)</div>
+            <div class="kpi-value">{annual_net_value:,.0f} $</div>
+            <div class="kpi-subtext">Net après coûts opérationnels</div>
+        </div>
+        """, unsafe_allow_html=True)
+
     with c_fin4:
-        st.metric("ROI Multiple", f"{roi_multiple:.1f}x")
+        st.markdown(f"""
+        <div class="kpi-card">
+            <div class="kpi-label">Retour sur Investissement</div>
+            <div class="kpi-value">{roi_multiple:.1f}x</div>
+            <div class="kpi-subtext">Multiple ROI de l'opération</div>
+        </div>
+        """, unsafe_allow_html=True)
 
     st.write("")
+    st.divider()
 
     # Export Section
-    st.markdown("### Export de la Liste de Travail Commerciale")
+    st.markdown('<div class="section-eyebrow">Export Opérationnel</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">Liste de Travail pour l\'Équipe Commerciale & Télévente</div>', unsafe_allow_html=True)
+
     if target_count > 0:
         export_cols = [
             ID_COL, "Predicted_NPS", "Detractor_Probability", "Contract",
@@ -152,7 +200,7 @@ def render_campaigns_view(pipeline, labeled_df, splits_df):
         filtered_df[export_cols].to_csv(csv_buffer, index=False)
 
         st.dataframe(
-            filtered_df[export_cols].head(10),
+            filtered_df[export_cols].head(8),
             hide_index=True,
             width="stretch",
         )
